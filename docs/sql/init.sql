@@ -2,6 +2,16 @@
 
 --   RBAC设计思路：  [用户] 1<->N [角色] 1<->N [权限]
 
+DROP TABLE IF EXISTS `t_tenant`;
+CREATE TABLE `t_sys_entitlement` (
+                                     `tenant_id` BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT '租户id',
+                                     `tenant_name` VARCHAR(32) NOT NULL COMMENT '租户名称',
+                                     `remark` VARCHAR(64) COMMENT '备注',
+                                     `state` TINYINT(6) NOT NULL DEFAULT 1 COMMENT '状态 0-停用, 1-启用',
+                                     `created_at` TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) COMMENT '创建时间',
+                                     `updated_at` TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '更新时间',
+                                     PRIMARY KEY (`tenant_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='系统权限表';
 -- 权限表
 DROP TABLE IF EXISTS `t_sys_entitlement`;
 CREATE TABLE `t_sys_entitlement` (
@@ -26,6 +36,7 @@ DROP TABLE IF EXISTS `t_sys_role`;
 CREATE TABLE `t_sys_role` (
   `role_id` VARCHAR(32) NOT NULL COMMENT '角色ID, ROLE_开头',
   `role_name` VARCHAR(32) NOT NULL COMMENT '角色名称',
+  `tenant_id` BIGINT(20) COMMENT '所属租户id',
   `sys_type` VARCHAR(8) NOT NULL COMMENT '所属系统： MGR-运营平台, MCH-商户中心',
   `belong_info_id` VARCHAR(64) NOT NULL DEFAULT '0' COMMENT '所属商户ID / 0(平台)',
   `updated_at` TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '更新时间',
@@ -44,6 +55,7 @@ CREATE TABLE `t_sys_role_ent_rela` (
 DROP TABLE IF EXISTS `t_sys_user`;
 CREATE TABLE `t_sys_user` (
 	`sys_user_id` BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT '系统用户ID',
+    `tenant_id` BIGINT(20) COMMENT '所属租户id',
     `login_username` VARCHAR(32) NOT NULL COMMENT '登录用户名',
 	`realname` VARCHAR(32) NOT NULL COMMENT '真实姓名',
 	`telphone` VARCHAR(32) NOT NULL COMMENT '手机号',
@@ -124,6 +136,7 @@ CREATE TABLE `t_mch_info` (
         `mch_short_name` VARCHAR(32) NOT NULL COMMENT '商户简称',
         `type` TINYINT(6) NOT NULL DEFAULT 1 COMMENT '类型: 1-普通商户, 2-特约商户(服务商模式)',
         `isv_no` VARCHAR(64) COMMENT '服务商号',
+        `tenant_id` BIGINT(20) COMMENT '所属租户id',
         `contact_name` VARCHAR(32) COMMENT '联系人姓名',
         `contact_tel` VARCHAR(32) COMMENT '联系人手机号',
         `contact_email` VARCHAR(32) COMMENT '联系人邮箱',
@@ -143,6 +156,7 @@ CREATE TABLE `t_mch_app` (
          `app_id` varchar(64) NOT NULL COMMENT '应用ID',
          `app_name` varchar(64) NOT NULL DEFAULT '' COMMENT '应用名称',
          `mch_no` VARCHAR(64) NOT NULL COMMENT '商户号',
+         `tenant_id` BIGINT(20) COMMENT '所属租户id',
          `state` TINYINT(6) NOT NULL DEFAULT 1 COMMENT '应用状态: 0-停用, 1-正常',
          `app_secret` VARCHAR(128) NOT NULL COMMENT '应用私钥',
          `remark` varchar(128) DEFAULT NULL COMMENT '备注',
@@ -250,6 +264,7 @@ CREATE TABLE `t_mch_pay_passage` (
 DROP TABLE IF EXISTS t_pay_order;
 CREATE TABLE `t_pay_order` (
         `pay_order_id` VARCHAR(30) NOT NULL COMMENT '支付订单号',
+        `tenant_id` BIGINT(20) COMMENT '所属租户id',
         `mch_no` VARCHAR(64) NOT NULL COMMENT '商户号',
         `isv_no` VARCHAR(64) DEFAULT NULL COMMENT '服务商号',
         `app_id` VARCHAR(64) NOT NULL COMMENT '应用ID',
@@ -340,6 +355,7 @@ CREATE TABLE `t_refund_order` (
           `pay_order_id` VARCHAR(30) NOT NULL COMMENT '支付订单号（与t_pay_order对应）',
           `channel_pay_order_no` VARCHAR(64) DEFAULT NULL COMMENT '渠道支付单号（与t_pay_order channel_order_no对应）',
           `mch_no` VARCHAR(64) NOT NULL COMMENT '商户号',
+          `tenant_id` BIGINT(20) COMMENT '所属租户id',
           `isv_no` VARCHAR(64) COMMENT '服务商号',
           `app_id` VARCHAR(64) NOT NULL COMMENT '应用ID',
           `mch_name` VARCHAR(30) NOT NULL COMMENT '商户名称',
@@ -374,6 +390,7 @@ CREATE TABLE `t_transfer_order` (
            `transfer_id` VARCHAR(32) NOT NULL COMMENT '转账订单号',
            `mch_no` VARCHAR(64) NOT NULL COMMENT '商户号',
            `isv_no` VARCHAR(64) COMMENT '服务商号',
+           `tenant_id` BIGINT(20) COMMENT '所属租户id',
            `app_id` VARCHAR(64) NOT NULL COMMENT '应用ID',
            `mch_name` VARCHAR(30) NOT NULL COMMENT '商户名称',
            `mch_type` TINYINT(6) NOT NULL COMMENT '类型: 1-普通商户, 2-特约商户(服务商模式)',
