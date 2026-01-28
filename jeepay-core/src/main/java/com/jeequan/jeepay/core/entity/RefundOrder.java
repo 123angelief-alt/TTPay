@@ -66,6 +66,9 @@ public class RefundOrder extends BaseModel {
     @Schema(title = "payOrderId", description = "支付订单号（与t_pay_order对应）")
     private String payOrderId;
 
+    @Schema(title = "tenantId", description = "租户id")
+    private Long tenantId;
+
     /**
      * 渠道支付单号（与t_pay_order channel_order_no对应）
      */

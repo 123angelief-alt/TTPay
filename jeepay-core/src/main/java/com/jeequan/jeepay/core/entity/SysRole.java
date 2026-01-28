@@ -61,6 +61,10 @@ public class SysRole implements Serializable {
     @Schema(title = "roleName", description = "角色名称")
     private String roleName;
 
+
+    @Schema(title = "tenantId", description = "租户id")
+    private Long tenantId;
+
     /**
      * 所属系统： MGR-运营平台, MCH-商户中心
      */

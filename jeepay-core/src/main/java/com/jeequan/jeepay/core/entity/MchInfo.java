@@ -73,6 +73,9 @@ public class MchInfo extends BaseModel implements Serializable {
     @Schema(title = "mchShortName", description = "商户简称")
     private String mchShortName;
 
+    @Schema(title = "tenantId", description = "租户id")
+    private Long tenantId;
+
     /**
      * 类型: 1-普通商户, 2-特约商户(服务商模式)
      */

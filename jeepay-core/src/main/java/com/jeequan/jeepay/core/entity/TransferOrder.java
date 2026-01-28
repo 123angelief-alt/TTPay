@@ -73,6 +73,9 @@ public class TransferOrder implements Serializable {
     @Schema(title = "mchNo", description = "商户号")
     private String mchNo;
 
+    @Schema(title = "tenantId", description = "租户id")
+    private Long tenantId;
+
     /**
      * 服务商号
      */

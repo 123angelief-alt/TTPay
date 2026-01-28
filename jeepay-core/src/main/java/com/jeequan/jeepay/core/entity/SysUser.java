@@ -62,6 +62,9 @@ public class SysUser extends BaseModel {
     @Schema(title = "loginUsername", description = "登录用户名")
     private String loginUsername;
 
+    @Schema(title = "tenantId", description = "租户id")
+    private Long tenantId;
+
     /**
      * 真实姓名
      */

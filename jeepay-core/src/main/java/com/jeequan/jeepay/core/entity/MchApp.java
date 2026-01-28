@@ -54,6 +54,9 @@ public class MchApp extends BaseModel {
     @Schema(title = "mchNo", description = "商户号")
     private String mchNo;
 
+    @Schema(title = "tenantId", description = "租户id")
+    private Long tenantId;
+
     /**
      * 应用状态: 0-停用, 1-正常
      */
