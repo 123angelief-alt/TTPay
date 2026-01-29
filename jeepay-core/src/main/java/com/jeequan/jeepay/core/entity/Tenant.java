@@ -26,6 +26,12 @@ public class Tenant extends BaseModel implements Serializable {
     @Schema(title = "tenantName", description = "租户名称")
     private String tenantName;
 
+    @Schema(title = "tenantCode", description = "租户代码")
+    private String tenantCode;
+
+    @Schema(title = "domainUrl", description = "租户二级域名（根据域名判断是哪个租户来的请求）")
+    private String domainUrl;
+
 
     @Schema(title = "remark", description = "备注")
     private String remark;

@@ -79,6 +79,11 @@ public class SysLog implements Serializable {
     @Schema(title = "sysType", description = "所属系统： MGR-运营平台, MCH-商户中心")
     private String sysType;
 
+
+    @Schema(title = "belongInfoId", description = "所属租户，0表示系统管理员")
+    private Long belongInfoId;
+
+
     /**
      * 方法名
      */

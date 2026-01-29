@@ -3,14 +3,16 @@
 --   RBAC设计思路：  [用户] 1<->N [角色] 1<->N [权限]
 
 DROP TABLE IF EXISTS `t_tenant`;
-CREATE TABLE `t_sys_entitlement` (
-                                     `tenant_id` BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT '租户id',
-                                     `tenant_name` VARCHAR(32) NOT NULL COMMENT '租户名称',
-                                     `remark` VARCHAR(64) COMMENT '备注',
-                                     `state` TINYINT(6) NOT NULL DEFAULT 1 COMMENT '状态 0-停用, 1-启用',
-                                     `created_at` TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) COMMENT '创建时间',
-                                     `updated_at` TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '更新时间',
-                                     PRIMARY KEY (`tenant_id`)
+CREATE TABLE `t_tenant` (
+    `tenant_id` BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT '租户id',
+    `tenant_name` VARCHAR(32) NOT NULL COMMENT '租户名称',
+    `tenant_code` VARCHAR(32) NOT NULL COMMENT '租户代码',
+    `domain_url` VARCHAR(32) NOT NULL COMMENT '租户二级域名（根据域名判断是哪个租户来的请求）',
+     `remark` VARCHAR(64) COMMENT '备注',
+     `state` TINYINT(6) NOT NULL DEFAULT 1 COMMENT '状态 0-停用, 1-启用',
+     `created_at` TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) COMMENT '创建时间',
+     `updated_at` TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) COMMENT '更新时间',
+      PRIMARY KEY (`tenant_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='系统权限表';
 -- 权限表
 DROP TABLE IF EXISTS `t_sys_entitlement`;
@@ -119,6 +121,7 @@ CREATE TABLE `t_sys_log` (
   `user_name` varchar(32) DEFAULT NULL COMMENT '用户姓名',
   `user_ip` varchar(128) NOT NULL DEFAULT '' COMMENT '用户IP',
   `sys_type` varchar(8) NOT NULL COMMENT '所属系统： MGR-运营平台, MCH-商户中心',
+  `belong_info_id` bigint(20) DEFAULT 0 COMMENT '所属租户，0表示系统管理员',
   `method_name` varchar(128) NOT NULL DEFAULT '' COMMENT '方法名',
   `method_remark` varchar(128) NOT NULL DEFAULT '' COMMENT '方法描述',
   `req_url` varchar(256) NOT NULL DEFAULT '' COMMENT '请求地址',
