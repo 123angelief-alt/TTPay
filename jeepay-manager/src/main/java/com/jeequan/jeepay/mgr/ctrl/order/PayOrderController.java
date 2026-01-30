@@ -27,6 +27,7 @@ import com.jeequan.jeepay.core.entity.PayWay;
 import com.jeequan.jeepay.core.exception.BizException;
 import com.jeequan.jeepay.core.model.ApiPageRes;
 import com.jeequan.jeepay.core.model.ApiRes;
+import com.jeequan.jeepay.core.model.security.JeeUserDetails;
 import com.jeequan.jeepay.core.utils.SeqKit;
 import com.jeequan.jeepay.exception.JeepayException;
 import com.jeequan.jeepay.mgr.ctrl.CommonCtrl;
@@ -45,6 +46,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -93,8 +96,12 @@ public class PayOrderController extends CommonCtrl {
     @RequestMapping(value="", method = RequestMethod.GET)
     public ApiPageRes<PayOrder> list() {
 
+
         PayOrder payOrder = getObject(PayOrder.class);
         JSONObject paramJSON = getReqParamJSON();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        JeeUserDetails currentUser = (JeeUserDetails) authentication.getPrincipal();
+        paramJSON.put("tenantId", currentUser.getSysUser().getTenantId());
         LambdaQueryWrapper<PayOrder> wrapper = PayOrder.gw();
 
         IPage<PayOrder> pages = payOrderService.listByPage(getIPage(), payOrder, paramJSON, wrapper);

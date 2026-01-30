@@ -437,6 +437,9 @@ public class PayOrderService extends ServiceImpl<PayOrderMapper, PayOrder> {
             if (StringUtils.isNotEmpty(paramJSON.getString("createdEnd"))) {
                 wrapper.le(PayOrder::getCreatedAt, paramJSON.getString("createdEnd"));
             }
+            if (paramJSON.getLong("tenantId")>0) {
+                wrapper.eq(PayOrder::getTenantId, paramJSON.getLong("tenantId"));
+            }
         }
         // 三合一订单
         if (paramJSON != null && StringUtils.isNotEmpty(paramJSON.getString("unionOrderId"))) {
