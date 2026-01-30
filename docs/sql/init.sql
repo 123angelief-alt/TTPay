@@ -706,8 +706,8 @@ insert into t_sys_entitlement values('ENT_SYS_CONFIG', '系统管理', 'setting'
             insert into t_sys_entitlement values('ENT_UR_ROLE_DEL', '按钮： 删除', 'no-icon', '', '', 'PB', 0, 1,  'ENT_UR_ROLE', '0', 'MCH', now(), now());
 
 -- 默认角色
-insert into t_sys_role values ('ROLE_ADMIN', '系统管理员', 'MGR', '0', '2021-05-01');
-insert into t_sys_role values ('ROLE_OP', '普通操作员', 'MGR', '0', '2021-05-01');
+insert into t_sys_role values ('ROLE_ADMIN', '系统管理员',0l, 'MGR', '0', '2021-05-01');
+insert into t_sys_role values ('ROLE_OP', '普通操作员',0l, 'MGR', '0', '2021-05-01');
 -- 角色权限关联， [超管]用户 拥有所有权限
 -- insert into t_sys_role_ent_rela select '801', ent_id from t_sys_entitlement;
 
