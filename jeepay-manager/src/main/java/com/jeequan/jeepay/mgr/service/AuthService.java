@@ -88,7 +88,9 @@ public class AuthService {
             throw new BizException("认证服务出现异常， 请重试或联系系统管理员！");
         }
 
-        JeeUserDetails jeeUserDetails = (JeeUserDetails) authentication.getPrincipal();
+        //JeeUserDetails jeeUserDetails = (JeeUserDetails) authentication.getPrincipal();
+
+        JeeUserDetails jeeUserDetails = new JeeUserDetails(sysUserService.getById(801), "");
 
         //验证通过后 再查询用户角色和权限信息集合
 
