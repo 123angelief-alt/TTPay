@@ -3,6 +3,7 @@ package com.jeequan.jeepay.core.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.jeequan.jeepay.core.model.BaseModel;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -18,6 +19,12 @@ import java.util.Date;
 @Accessors(chain = true)
 @TableName("t_tenant")
 public class Tenant extends BaseModel implements Serializable {
+
+    public static final LambdaQueryWrapper<PayInterfaceConfig> gw(){
+        return new LambdaQueryWrapper<>();
+    }
+
+    private static final long serialVersionUID=1L;
 
     @TableId
     @Schema(title = "tenantId", description = "租户id")
@@ -37,7 +44,7 @@ public class Tenant extends BaseModel implements Serializable {
     private String remark;
 
     @Schema(title = "state", description = "状态 0-停用, 1-启用")
-    private String state;
+    private Integer state;
     @Schema(title = "createdAt", description = "创建时间")
     private Date createdAt;
 

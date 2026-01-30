@@ -25,6 +25,7 @@ import com.jeequan.jeepay.core.exception.JeepayAuthenticationException;
 import com.jeequan.jeepay.core.jwt.JWTPayload;
 import com.jeequan.jeepay.core.jwt.JWTUtils;
 import com.jeequan.jeepay.core.model.security.JeeUserDetails;
+import com.jeequan.jeepay.core.thread.TenantContext;
 import com.jeequan.jeepay.mgr.config.SystemYmlConfig;
 import com.jeequan.jeepay.service.impl.SysRoleEntRelaService;
 import com.jeequan.jeepay.service.impl.SysRoleService;
@@ -95,6 +96,10 @@ public class AuthService {
         //验证通过后 再查询用户角色和权限信息集合
 
         SysUser sysUser = jeeUserDetails.getSysUser();
+
+        if (sysUser.getTenantId()>0&&sysUser.getTenantId()!=TenantContext.getTenantId()){
+            throw new BizException("当前登录用户和域名不匹配");
+        }
 
         //非超级管理员 && 不包含左侧菜单 进行错误提示
         if(sysUser.getIsAdmin() != CS.YES && sysEntitlementMapper.userHasLeftMenu(sysUser.getSysUserId(), CS.SYS_TYPE.MGR) <= 0){
