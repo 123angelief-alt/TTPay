@@ -78,7 +78,7 @@ public class AuthService {
         //3. 最后返回loadUserByUsername 封装的对象信息；
         Authentication authentication = null;
         try {
-           // authentication = authenticationManager.authenticate(upToken);
+            authentication = authenticationManager.authenticate(upToken);
         } catch (JeepayAuthenticationException jex) {
             throw jex.getBizException() == null ? new BizException(jex.getMessage()) : jex.getBizException();
         } catch (BadCredentialsException e) {
@@ -88,9 +88,9 @@ public class AuthService {
             throw new BizException("认证服务出现异常， 请重试或联系系统管理员！");
         }
 
-        //JeeUserDetails jeeUserDetails = (JeeUserDetails) authentication.getPrincipal();
+        JeeUserDetails jeeUserDetails = (JeeUserDetails) authentication.getPrincipal();
 
-        JeeUserDetails jeeUserDetails = new JeeUserDetails(sysUserService.getById(801), "");
+        //JeeUserDetails jeeUserDetails = new JeeUserDetails(sysUserService.getById(801), "");
 
         //验证通过后 再查询用户角色和权限信息集合
 
