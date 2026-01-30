@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.util.PathMatcher;
 
 import java.io.IOException;
 
@@ -19,11 +21,30 @@ public class TenantResolveFilter implements Filter {
     @Autowired
     private TenantService tenantService;
 
+    private static final PathMatcher pathMatcher = new AntPathMatcher();
+
+    private static final String[] IGNORE_TENANT_PATH = {
+            "/api/vercode",
+            "/api/health",
+            "/error",
+            "/favicon.ico"
+    };
+
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
 
         HttpServletRequest req = (HttpServletRequest) request;
+        String uri = req.getRequestURI();
+
+        for (String pattern : IGNORE_TENANT_PATH) {
+            if (pathMatcher.match(pattern, uri)) {
+                chain.doFilter(request, response);
+                return;
+            }
+        }
+
         String domain = req.getServerName(); // ★ 核心
         log.info("登录域名：{}",domain);
 
