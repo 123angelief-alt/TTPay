@@ -24,6 +24,7 @@ import com.jeequan.jeepay.core.constants.ApiCodeEnum;
 import com.jeequan.jeepay.core.entity.MchApp;
 import com.jeequan.jeepay.core.model.ApiPageRes;
 import com.jeequan.jeepay.core.model.ApiRes;
+import com.jeequan.jeepay.core.model.security.JeeUserDetails;
 import com.jeequan.jeepay.mgr.ctrl.CommonCtrl;
 import com.jeequan.jeepay.service.impl.MchAppService;
 import com.jeequan.jeepay.service.impl.MchInfoService;
@@ -34,6 +35,8 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -71,6 +74,9 @@ public class MchAppController extends CommonCtrl {
     @GetMapping
     public ApiPageRes<MchApp> list() {
         MchApp mchApp = getObject(MchApp.class);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        JeeUserDetails currentUser = (JeeUserDetails) authentication.getPrincipal();
+        mchApp.setTenantId(currentUser.getSysUser().getTenantId());
 
         IPage<MchApp> pages = mchAppService.selectPage(getIPage(), mchApp);
         return ApiPageRes.pages(pages);

@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.jeequan.jeepay.core.entity.RefundOrder;
 import com.jeequan.jeepay.core.entity.TransferOrder;
 import com.jeequan.jeepay.service.mapper.TransferOrderMapper;
 import org.apache.commons.lang3.StringUtils;
@@ -141,6 +142,9 @@ public class TransferOrderService extends ServiceImpl<TransferOrderMapper, Trans
             }
             if (StringUtils.isNotEmpty(paramJSON.getString("createdEnd"))) {
                 wrapper.le(TransferOrder::getCreatedAt, paramJSON.getString("createdEnd"));
+            }
+            if (paramJSON.getLong("tenantId")>0) {
+                wrapper.eq(TransferOrder::getTenantId, paramJSON.getLong("tenantId"));
             }
         }
         // 三合一订单

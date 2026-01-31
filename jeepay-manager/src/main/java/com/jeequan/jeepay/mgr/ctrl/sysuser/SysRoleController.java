@@ -22,10 +22,12 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.jeequan.jeepay.core.aop.MethodLog;
 import com.jeequan.jeepay.core.constants.CS;
 import com.jeequan.jeepay.core.entity.SysRole;
+import com.jeequan.jeepay.core.entity.SysUser;
 import com.jeequan.jeepay.core.entity.SysUserRoleRela;
 import com.jeequan.jeepay.core.exception.BizException;
 import com.jeequan.jeepay.core.model.ApiPageRes;
 import com.jeequan.jeepay.core.model.ApiRes;
+import com.jeequan.jeepay.core.model.security.JeeUserDetails;
 import com.jeequan.jeepay.core.utils.StringKit;
 import com.jeequan.jeepay.mgr.ctrl.CommonCtrl;
 import com.jeequan.jeepay.mgr.service.AuthService;
@@ -41,7 +43,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -88,12 +92,20 @@ public class SysRoleController extends CommonCtrl {
 		lambdaCondition.eq(SysRole::getSysType, CS.SYS_TYPE.MGR);
 		lambdaCondition.eq(SysRole::getBelongInfoId, 0);
 
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		JeeUserDetails currentUser = (JeeUserDetails) authentication.getPrincipal();
+		queryObject.setTenantId(currentUser.getSysUser().getTenantId());
+
 		if(StringUtils.isNotEmpty(queryObject.getRoleName())){
 			lambdaCondition.like(SysRole::getRoleName, queryObject.getRoleName());
 		}
 
 		if(StringUtils.isNotEmpty(queryObject.getRoleId())){
 			lambdaCondition.like(SysRole::getRoleId, queryObject.getRoleId());
+		}
+
+		if(queryObject.getTenantId() > 0){
+			lambdaCondition.eq(SysRole::getTenantId, queryObject.getTenantId());
 		}
 
 		//是否有排序字段

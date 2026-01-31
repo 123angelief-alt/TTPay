@@ -24,6 +24,7 @@ import com.jeequan.jeepay.core.entity.SysUser;
 import com.jeequan.jeepay.core.exception.BizException;
 import com.jeequan.jeepay.core.model.ApiPageRes;
 import com.jeequan.jeepay.core.model.ApiRes;
+import com.jeequan.jeepay.core.model.security.JeeUserDetails;
 import com.jeequan.jeepay.mgr.ctrl.CommonCtrl;
 import com.jeequan.jeepay.mgr.service.AuthService;
 import com.jeequan.jeepay.service.impl.SysUserAuthService;
@@ -36,6 +37,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -77,12 +80,20 @@ public class SysUserController extends CommonCtrl {
 		LambdaQueryWrapper<SysUser> condition = SysUser.gw();
 		condition.eq(SysUser::getSysType, CS.SYS_TYPE.MGR);
 
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		JeeUserDetails currentUser = (JeeUserDetails) authentication.getPrincipal();
+		queryObject.setTenantId(currentUser.getSysUser().getTenantId());
+
 		if(StringUtils.isNotEmpty(queryObject.getRealname())){
 			condition.like(SysUser::getRealname, queryObject.getRealname());
 		}
 
 		if(queryObject.getSysUserId() != null){
 			condition.eq(SysUser::getSysUserId, queryObject.getSysUserId());
+		}
+
+		if(queryObject.getTenantId() > 0){
+			condition.eq(SysUser::getTenantId, queryObject.getTenantId());
 		}
 
 		condition.orderByDesc(SysUser::getCreatedAt); //时间： 降序

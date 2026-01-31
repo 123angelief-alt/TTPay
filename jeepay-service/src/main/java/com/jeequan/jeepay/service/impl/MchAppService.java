@@ -81,6 +81,9 @@ public class MchAppService extends ServiceImpl<MchAppMapper, MchApp> {
         if (mchApp.getState() != null) {
             wrapper.eq(MchApp::getState, mchApp.getState());
         }
+        if (mchApp.getTenantId() >0) {
+            wrapper.eq(MchApp::getTenantId, mchApp.getTenantId());
+        }
         wrapper.orderByDesc(MchApp::getCreatedAt);
 
         IPage<MchApp> pages = this.page(iPage, wrapper);

@@ -29,6 +29,7 @@ import com.jeequan.jeepay.core.entity.MchInfo;
 import com.jeequan.jeepay.core.entity.SysUser;
 import com.jeequan.jeepay.core.model.ApiPageRes;
 import com.jeequan.jeepay.core.model.ApiRes;
+import com.jeequan.jeepay.core.model.security.JeeUserDetails;
 import com.jeequan.jeepay.mgr.ctrl.CommonCtrl;
 import com.jeequan.jeepay.service.impl.MchInfoService;
 import com.jeequan.jeepay.service.impl.SysUserAuthService;
@@ -41,6 +42,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -89,6 +92,10 @@ public class MchInfoController extends CommonCtrl {
     public ApiPageRes<MchInfo> list() {
         MchInfo mchInfo = getObject(MchInfo.class);
 
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        JeeUserDetails currentUser = (JeeUserDetails) authentication.getPrincipal();
+        mchInfo.setTenantId(currentUser.getSysUser().getTenantId());
+
         LambdaQueryWrapper<MchInfo> wrapper = MchInfo.gw();
         if (StringUtils.isNotEmpty(mchInfo.getMchNo())) {
             wrapper.eq(MchInfo::getMchNo, mchInfo.getMchNo());
@@ -104,6 +111,9 @@ public class MchInfoController extends CommonCtrl {
         }
         if (mchInfo.getState() != null) {
             wrapper.eq(MchInfo::getState, mchInfo.getState());
+        }
+        if (mchInfo.getTenantId() >0) {
+            wrapper.eq(MchInfo::getTenantId, mchInfo.getTenantId());
         }
         wrapper.orderByDesc(MchInfo::getCreatedAt);
 
